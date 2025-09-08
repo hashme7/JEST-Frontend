@@ -1,19 +1,27 @@
-// src/components/CreateTodo.jsx
 import React, { useState, useCallback } from 'react';
 import { useTodoContext } from '../context/TodoContext';
 import { styles } from '../styles/appStyles';
 
-const CreateTodo = React.memo(() => {
+const CreateTodo: React.FC = React.memo(() => {
   const { createTodo, loading } = useTodoContext();
-  const [newTodo, setNewTodo] = useState({ title: '', description: '' });
+  const [newTodo, setNewTodo] = useState<{ title: string; description: string }>({
+    title: '',
+    description: '',
+  });
 
-  const handleTitleChange = useCallback((e) => {
-    setNewTodo(prev => ({ ...prev, title: e.target.value }));
-  }, []);
+  const handleTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setNewTodo((prev) => ({ ...prev, title: e.target.value }));
+    },
+    []
+  );
 
-  const handleDescriptionChange = useCallback((e) => {
-    setNewTodo(prev => ({ ...prev, description: e.target.value }));
-  }, []);
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setNewTodo((prev) => ({ ...prev, description: e.target.value }));
+    },
+    []
+  );
 
   const handleSubmit = useCallback(async () => {
     const success = await createTodo(newTodo);
@@ -22,12 +30,15 @@ const CreateTodo = React.memo(() => {
     }
   }, [createTodo, newTodo]);
 
-  const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  }, [handleSubmit]);
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [handleSubmit]
+  );
 
   const isCreateDisabled = loading || !newTodo.title.trim();
 
@@ -50,10 +61,10 @@ const CreateTodo = React.memo(() => {
           value={newTodo.description}
           onChange={handleDescriptionChange}
           style={styles.textarea}
-          rows="3"
+          rows={3}
         />
       </div>
-      <button 
+      <button
         onClick={handleSubmit}
         disabled={isCreateDisabled}
         style={isCreateDisabled ? styles.buttonDisabled : styles.button}

@@ -1,6 +1,6 @@
-import React from 'react';
-import { useTodoContext } from '../context/TodoContext';
-import { styles } from '../styles/appStyles';
+import React from "react";
+import { useTodoContext } from "../context/TodoContext";
+import { styles } from "../styles/appStyles";
 
 const ErrorBanner = React.memo(() => {
   const { error, clearError } = useTodoContext();
@@ -17,6 +17,6 @@ const ErrorBanner = React.memo(() => {
   );
 });
 
-ErrorBanner.displayName = 'ErrorBanner';
+ErrorBanner.displayName = "ErrorBanner";
 
 export default ErrorBanner;
