@@ -10,7 +10,7 @@ import { styles } from "./styles/appStyles";
 
 // ---- Types ----
 export interface Todo {
-  id: string;
+  id?: string;
   title: string;
   isCompleted: boolean;
   isDeleted: boolean;

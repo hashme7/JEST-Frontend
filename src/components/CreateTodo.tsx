@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import { useTodoContext } from '../context/TodoContext';
 import { styles } from '../styles/appStyles';
+import { Todo } from '../App';
 
 const CreateTodo: React.FC = React.memo(() => {
   const { createTodo, loading } = useTodoContext();
-  const [newTodo, setNewTodo] = useState<{ title: string; description: string }>({
+  const [newTodo, setNewTodo] = useState<Omit<Todo, "_id" | "createdAt" | "updatedAt">>({
     title: '',
-    description: '',
+    isCompleted: false,
+    isDeleted: false,
   });
 
   const handleTitleChange = useCallback(
@@ -26,7 +28,11 @@ const CreateTodo: React.FC = React.memo(() => {
   const handleSubmit = useCallback(async () => {
     const success = await createTodo(newTodo);
     if (success) {
-      setNewTodo({ title: '', description: '' });
+      setNewTodo({
+    title: '',
+    isCompleted: false,
+    isDeleted: false,
+  });
     }
   }, [createTodo, newTodo]);
 
