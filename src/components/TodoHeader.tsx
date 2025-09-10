@@ -6,6 +6,7 @@ interface TodoHeaderProps {
 }
 
 const TodoHeaderComponent: React.FC<TodoHeaderProps> = ({ todosCount }) => {
+  
   return (
     <>
       <h1 style={styles.title}>Todo App</h1>
@@ -14,6 +15,7 @@ const TodoHeaderComponent: React.FC<TodoHeaderProps> = ({ todosCount }) => {
   );
 };
 
+// Memoize to prevent unnecessary re-renders
 const TodoHeader = React.memo(TodoHeaderComponent);
 TodoHeader.displayName = "TodoHeader";
 

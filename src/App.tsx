@@ -19,13 +19,12 @@ const TodoApp: React.FC = () => {
     deleteTodo,
     clearError,
   } = useTodoApi();
-
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
 
-  const activeTodos = useMemo<Todo[]>(
-    () => todos.filter((todo: Todo) => !todo.isDeleted && !todo.deleted),
-    [todos]
-  );
+  // Memoize activeTodos with proper dependency
+  const activeTodos = useMemo<Todo[]>(() => {
+    return todos.filter((todo: Todo) => !todo.isDeleted && !todo.deleted);
+  }, [todos]);
 
   const handleEditTodo = useCallback((id: string) => {
     setEditingTodo(id);
@@ -43,32 +42,44 @@ const TodoApp: React.FC = () => {
     [updateTodo]
   );
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    todos: activeTodos,
+    loading,
+    error,
+    editingTodo,
+    createTodo,
+    updateTodo: handleUpdateTodo,
+    deleteTodo,
+    clearError,
+    handleEditTodo,
+    handleCancelEdit,
+  }), [
+    activeTodos,
+    loading,
+    error,
+    editingTodo,
+    createTodo,
+    handleUpdateTodo,
+    deleteTodo,
+    clearError,
+    handleEditTodo,
+    handleCancelEdit,
+  ]);
+  
+
   useEffect(() => {
     fetchTodos();
   }, [fetchTodos]);
 
+  console.log("App render - loading:", loading, "todos length:", todos.length, "activeTodos length:", activeTodos.length);
+  
   return (
-    <TodoProvider
-      value={{
-        todos: activeTodos,
-        loading,
-        error,
-        editingTodo,
-        createTodo,
-        updateTodo: handleUpdateTodo,
-        deleteTodo,
-        clearError,
-        handleEditTodo,
-        handleCancelEdit,
-      }}
-    >
+    <TodoProvider value={contextValue}>
       <div style={styles.container}>
         <TodoHeader todosCount={activeTodos.length} />
-
         <ErrorBanner />
-
         <CreateTodo />
-
         <TodoList />
       </div>
     </TodoProvider>

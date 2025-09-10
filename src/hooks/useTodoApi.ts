@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { Todo, CreateTodoInput, UpdateTodoInput, ApiTodoResponse } from '../types/Todo';
 
@@ -22,27 +22,35 @@ export const useTodoApi = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const hasFetched = useRef<boolean>(false);
 
+  // Create stable function references
   const fetchTodos = useCallback(async () => {
+    if (hasFetched.current) {
+      console.log("fetchTodos already called, skipping");
+      return;
+    }
+    
     try {
-      setLoading(true);
+      hasFetched.current = true;
       const response = await axios.get<ApiTodoResponse[]>(`${API_BASE_URL}`);
       const normalizedTodos = response.data.map(normalizeTodo);
       setTodos(normalizedTodos);
-      setError('');
     } catch (error: any) {
       console.error("Fetch Error:", error);
       setError('Error fetching todos: ' + (error?.message || 'Unknown error'));
+      hasFetched.current = false; // Reset on error so it can be retried
     } finally {
-      setLoading(false);
+      
     }
-  }, []);
+  }, []); // No dependencies - stable reference
 
   const createTodo = useCallback(async (todoData: CreateTodoInput): Promise<boolean> => {
     if (!todoData.title.trim()) return false;
 
     try {
-      setLoading(true);
+      // setLoading(true);
+      
       const response = await fetch(`${API_BASE_URL}/todos`, {
         method: 'POST',
         headers: {
@@ -57,8 +65,10 @@ export const useTodoApi = () => {
       });
 
       if (response.ok) {
-        await fetchTodos();
-        setError('');
+        // Refetch todos after successful creation
+        const todosResponse = await axios.get<ApiTodoResponse[]>(`${API_BASE_URL}`);
+        const normalizedTodos = todosResponse.data.map(normalizeTodo);
+        setTodos(normalizedTodos);
         return true;
       } else {
         setError('Failed to create todo');
@@ -68,13 +78,14 @@ export const useTodoApi = () => {
       setError('Error creating todo: ' + (err?.message || 'Unknown error'));
       return false;
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
-  }, [fetchTodos]);
+  }, []); 
 
   const updateTodo = useCallback(async (id: string, updates: UpdateTodoInput): Promise<boolean> => {
     try {
       setLoading(true);
+      setError('');
       
       // Convert our internal format to API format
       const apiUpdates = {
@@ -93,8 +104,10 @@ export const useTodoApi = () => {
       });
 
       if (response.ok) {
-        await fetchTodos();
-        setError('');
+        // Refetch todos after successful update
+        const todosResponse = await axios.get<ApiTodoResponse[]>(`${API_BASE_URL}`);
+        const normalizedTodos = todosResponse.data.map(normalizeTodo);
+        setTodos(normalizedTodos);
         return true;
       } else {
         setError('Failed to update todo');
@@ -106,18 +119,22 @@ export const useTodoApi = () => {
     } finally {
       setLoading(false);
     }
-  }, [fetchTodos]);
+  }, []); // No dependencies
 
   const deleteTodo = useCallback(async (id: string): Promise<boolean> => {
     try {
       setLoading(true);
+      setError('');
+      
       const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        await fetchTodos();
-        setError('');
+        // Refetch todos after successful deletion
+        const todosResponse = await axios.get<ApiTodoResponse[]>(`${API_BASE_URL}`);
+        const normalizedTodos = todosResponse.data.map(normalizeTodo);
+        setTodos(normalizedTodos);
         return true;
       } else {
         setError('Failed to delete todo');
@@ -129,9 +146,11 @@ export const useTodoApi = () => {
     } finally {
       setLoading(false);
     }
-  }, [fetchTodos]);
+  }, []); // No dependencies
 
-  const clearError = useCallback(() => setError(''), []);
+  const clearError = useCallback(() => {
+    setError('');
+  }, []);
 
   return {
     todos,

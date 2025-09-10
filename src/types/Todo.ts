@@ -1,13 +1,13 @@
 
 export interface Todo {
   id?: string;
-  _id?: string; // For MongoDB compatibility
+  _id?: string;
   title: string;
   description?: string;
   isCompleted: boolean;
-  completed?: boolean; // For API compatibility
+  completed?: boolean; 
   isDeleted: boolean;
-  deleted?: boolean; // For API compatibility
+  deleted?: boolean; 
   createdAt?: string;
   updatedAt?: string;
 }

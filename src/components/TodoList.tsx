@@ -5,7 +5,8 @@ import EditTodo from './EditTodo';
 import { styles } from '../styles/appStyles';
 
 const TodoList: React.FC = React.memo(() => {
-  const { todos, loading, editingTodo } = useTodoContext();
+  const { todos, editingTodo,loading } = useTodoContext();
+
 
   if (loading && todos.length === 0) {
     return <p>Loading todos...</p>;

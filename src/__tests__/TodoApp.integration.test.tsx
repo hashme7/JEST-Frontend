@@ -1,5 +1,5 @@
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import TodoApp from "../App";
 import axios from "axios";
 
@@ -47,9 +47,10 @@ describe("TodoApp Integration Tests", () => {
       "Testing the complete flow"
     );
     await user.click(screen.getByRole("button", { name: /add todo/i }));
+    await waitFor(async () => {
+      const todoItem = await screen.findByText("Integration Test Todo");
+      expect(todoItem).toBeInTheDocument();
+    });
 
-    // Assert todo is visible
-    const todoItem = await screen.findByText("Integration Test Todo");
-    expect(todoItem).toBeInTheDocument();
   });
 });
