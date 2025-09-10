@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { TodoProvider } from "./context/TodoContext";
 import TodoHeader from "./components/TodoHeader";
@@ -7,14 +6,7 @@ import CreateTodo from "./components/CreateTodo";
 import TodoList from "./components/TodoList";
 import { useTodoApi } from "./hooks/useTodoApi";
 import { styles } from "./styles/appStyles";
-
-// ---- Types ----
-export interface Todo {
-  id?: string;
-  title: string;
-  isCompleted: boolean;
-  isDeleted: boolean;
-}
+import { Todo } from "./types/Todo";
 
 const TodoApp: React.FC = () => {
   const {
@@ -31,7 +23,7 @@ const TodoApp: React.FC = () => {
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
 
   const activeTodos = useMemo<Todo[]>(
-    () => todos.filter((todo: Todo) => !todo.isDeleted),
+    () => todos.filter((todo: Todo) => !todo.isDeleted && !todo.deleted),
     [todos]
   );
 

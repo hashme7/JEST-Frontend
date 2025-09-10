@@ -1,7 +1,8 @@
 export default {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  moduleNameMapping: {
+  // Fixed: moduleNameMapping should be moduleNameMapper
+  moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transform: {
@@ -18,5 +19,11 @@ export default {
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}'
-  ]
+  ],
+  // Added to handle ES modules
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  // Added to handle TypeScript files properly
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  // Added for better error messages
+  verbose: true
 };

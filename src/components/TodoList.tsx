@@ -21,19 +21,26 @@ const TodoList: React.FC = React.memo(() => {
 
   return (
     <div>
-      {todos.map((todo) => (
-        editingTodo === todo._id ? (
+      {todos.map((todo) => {
+        const todoId = todo.id || todo._id;
+        
+        if (!todoId) {
+          console.warn('Todo without ID found:', todo);
+          return null;
+        }
+
+        return editingTodo === todoId ? (
           <EditTodo
-            key={`edit-${todo._id}`}
+            key={`edit-${todoId}`}
             todo={todo}
           />
         ) : (
           <TodoItem
-            key={todo._id}
+            key={todoId}
             todo={todo}
           />
-        )
-      ))}
+        );
+      })}
     </div>
   );
 });

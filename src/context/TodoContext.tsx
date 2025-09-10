@@ -1,24 +1,16 @@
-// context/TodoContext.tsx
 import React, { createContext, useContext } from "react";
-
-export interface Todo {
-  _id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  createdAt: string;
-}
+import { Todo, CreateTodoInput, UpdateTodoInput } from "../types/Todo";
 
 export interface TodoContextType {
   todos: Todo[];
   loading: boolean;
   error: string | null;
   editingTodo: string | null;
-  setEditingTodo: (id: string | null) => void;
-  createTodo: (todo: Omit<Todo, "_id" | "createdAt" | "updatedAt">) => Promise<boolean>;
-  updateTodo: (id: string, updates: Partial<Todo>) => void;
-  deleteTodo: (id: string) => void;
+  createTodo: (todo: CreateTodoInput) => Promise<boolean>;
+  updateTodo: (id: string, updates: UpdateTodoInput) => Promise<boolean | void>;
+  deleteTodo: (id: string) => Promise<boolean | void>;
   handleEditTodo: (id: string) => void;
+  handleCancelEdit: () => void;
   clearError: () => void;
 }
 
@@ -43,4 +35,3 @@ export const useTodoContext = () => {
   }
   return context;
 };
-

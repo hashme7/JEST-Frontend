@@ -1,31 +1,42 @@
-// src/components/EditTodo.jsx
+// src/components/EditTodo.tsx
 import React, { useState, useCallback } from 'react';
 import { useTodoContext } from '../context/TodoContext';
 import { styles } from '../styles/appStyles';
+import { Todo } from '../types/Todo';
 
-const EditTodo = React.memo(({ todo }) => {
+interface EditTodoProps {
+  todo: Todo;
+}
+
+const EditTodo: React.FC<EditTodoProps> = React.memo(({ todo }) => {
   const { updateTodo, handleCancelEdit } = useTodoContext();
-  const [editTitle, setEditTitle] = useState(todo.title);
-  const [editDescription, setEditDescription] = useState(todo.description || '');
+  const [editTitle, setEditTitle] = useState<string>(todo.title);
+  const [editDescription, setEditDescription] = useState<string>(todo.description || '');
 
   const handleSave = useCallback(() => {
     if (editTitle.trim()) {
-      updateTodo(todo._id, { title: editTitle, description: editDescription });
+      const todoId = todo.id || todo._id;
+      if (todoId) {
+        updateTodo(todoId, { 
+          title: editTitle, 
+          description: editDescription 
+        });
+      }
     }
-  }, [editTitle, editDescription, updateTodo, todo._id]);
+  }, [editTitle, editDescription, updateTodo, todo.id, todo._id]);
 
-  const handleKeyPress = useCallback((e) => {
+  const handleKeyPress = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSave();
     }
   }, [handleSave]);
 
-  const handleTitleChange = useCallback((e) => {
+  const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEditTitle(e.target.value);
   }, []);
 
-  const handleDescriptionChange = useCallback((e) => {
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEditDescription(e.target.value);
   }, []);
 
@@ -47,7 +58,7 @@ const EditTodo = React.memo(({ todo }) => {
           onChange={handleDescriptionChange}
           placeholder="Description"
           style={styles.textarea}
-          rows="2"
+          rows={2}
         />
       </div>
       <button onClick={handleSave} style={styles.smallButton}>

@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useTodoContext } from '../context/TodoContext';
 import { styles } from '../styles/appStyles';
-import { Todo } from '../App';
+import { CreateTodoInput } from '../types/Todo';
 
 const CreateTodo: React.FC = React.memo(() => {
   const { createTodo, loading } = useTodoContext();
-  const [newTodo, setNewTodo] = useState<Omit<Todo, "_id" | "createdAt" | "updatedAt">>({
+  const [newTodo, setNewTodo] = useState<CreateTodoInput>({
     title: '',
+    description: '',
     isCompleted: false,
     isDeleted: false,
   });
@@ -29,10 +30,11 @@ const CreateTodo: React.FC = React.memo(() => {
     const success = await createTodo(newTodo);
     if (success) {
       setNewTodo({
-    title: '',
-    isCompleted: false,
-    isDeleted: false,
-  });
+        title: '',
+        description: '',
+        isCompleted: false,
+        isDeleted: false,
+      });
     }
   }, [createTodo, newTodo]);
 
@@ -64,7 +66,7 @@ const CreateTodo: React.FC = React.memo(() => {
       <div style={{ marginBottom: '10px' }}>
         <textarea
           placeholder="Description (optional)"
-          value={newTodo.description}
+          value={newTodo.description || ''}
           onChange={handleDescriptionChange}
           style={styles.textarea}
           rows={3}
